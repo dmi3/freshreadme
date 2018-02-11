@@ -8,11 +8,11 @@ This is simple Markdown preprocessor which updates examples from source code fil
 
 If included files are compiled and verified on project build phase, it will help avoid a shameful situation when examples in readme are outdated.
 
-Suggested usage is git pre commit hook.
+Suggested usage is Git [pre commit hook](#automation).
 
 ## Motivation
 
-Benefits comparing with [existing solutions](#alternativesolutions):
+Benefits comparing with [existing solutions](#alternative-solutions):
 
 * Examples are updated in Markdown file not in resulting html, so default readme on Github or people who open Markdown file will get up to date examples
 * Source is refreshed in one Markdown file, so you don't need to keep duplicated `README.source.md` and `README.source.md`
@@ -22,8 +22,9 @@ Benefits comparing with [existing solutions](#alternativesolutions):
 
 ## How to use
 
-* Put `<!-- [freshReadmeSource](path/to/file.ext) -->` before &grave;&grave;&grave; to `README.md` to inlude `path/to/file.ext`
-* Put `<!-- [freshReadmeSource](path/to/file.ext#snippetName) -->` before &grave;&grave;&grave; to `README.md` to inlude code surrounded by `snippetName` in `path/to/file.ext`
+* In `README.md`:
+    - Put `<!-- [freshReadmeSource](path/to/file.ext) -->` before &grave;&grave;&grave; to inlude `path/to/file.ext`
+    - Put `<!-- [freshReadmeSource](path/to/file.ext#snippetName) -->` before &grave;&grave;&grave; to inlude text surrounded by `snippetName` in `path/to/file.ext`
 
 ## Example
 
@@ -51,7 +52,7 @@ For example `README.md`:
 And `examples/java.java`:
 
 <!-- [freshReadmeSource](examples/Examples.java) -->
-```
+```java
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

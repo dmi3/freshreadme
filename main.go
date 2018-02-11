@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
-    "io/ioutil"
 )
 
 var prefix = "freshReadmeSnippet: "
@@ -39,10 +39,10 @@ func includeFile(out *os.File, fileName string) {
 	check(err)
 
 	_, err = out.Write(in)
-    check(err)
+	check(err)
 
-    _, err = out.WriteString("\n")
-    check(err)
+	_, err = out.WriteString("\n")
+	check(err)
 }
 
 func fromFile(out *os.File, header string, fileName string) {
