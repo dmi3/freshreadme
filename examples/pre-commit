@@ -1,0 +1,4 @@
+#!/bin/sh
+
+freshReadme
+git add README.md
