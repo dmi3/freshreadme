@@ -24,11 +24,16 @@ func assertPanic(t *testing.T, msg string, f func()) {
 
 func dump(dir string, fileName string, content string) {
 	var fn = filepath.Join(dir, fileName)
+	_ = os.MkdirAll(filepath.Dir(fn), os.ModePerm)
 	var e = ioutil.WriteFile(fn, []byte(content), 0666)
 	check(e)
 }
 
 func refresh(source string, readme string) string {
+	startDir, e := filepath.Abs("./")
+	check(e)
+	defer os.Chdir(startDir)
+
 	dir, e := ioutil.TempDir("", "example")
 	check(e)
 	os.Chdir(dir)
@@ -172,4 +177,40 @@ after test
 `)
 
 	})
+}
+
+func TestTheTest(t *testing.T) {
+	readme, err := ioutil.ReadFile("examples/README.example.md")
+	check(err)
+
+	source1, err := ioutil.ReadFile("examples/Examples.java")
+	check(err)
+
+	source2, err := ioutil.ReadFile("examples/examples.py")
+	check(err)
+
+	expected, err := ioutil.ReadFile("examples/README.result.md")
+	check(err)
+
+	startDir, e := filepath.Abs("./")
+	check(e)
+	defer os.Chdir(startDir)
+
+	dir, e := ioutil.TempDir("", "example")
+	check(e)
+	os.Chdir(dir)
+	defer os.RemoveAll(dir)
+
+	dump(dir, "README.md", strings.Replace(string(readme), "    ", "", -1))
+	dump(dir, "examples/Examples.java", string(source1))
+	dump(dir, "examples/examples.py", string(source2))
+
+	main()
+
+	result, err := ioutil.ReadFile("README.md")
+	check(err)
+
+	if string(expected) != string(result) {
+		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, result)
+	}
 }
