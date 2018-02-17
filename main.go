@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -81,8 +82,8 @@ func fromFile(out *os.File, header string, fileName string) {
 	panicIf(state != END, fileName, i, "Unable to find snippet `%s`", header)
 }
 
-func main() {
-	fileName := "README.md"
+func refresh(fileName string) {
+	dir := filepath.Dir(fileName)
 
 	refresh, _ := regexp.Compile("^<!--.*\\[freshReadmeSource\\]\\(([^#]+)#*(.*?)\\)")
 
@@ -108,9 +109,9 @@ func main() {
 		if state == FENCE {
 			state = INSIDE_FENCE
 			if header == "" {
-				includeFile(out, source)
+				includeFile(out, filepath.Join(dir, source))
 			} else {
-				fromFile(out, prefix+header, source)
+				fromFile(out, prefix+header, filepath.Join(dir, source))
 			}
 			header = ""
 			source = ""
@@ -147,4 +148,12 @@ func main() {
 	out.Close()
 	err = os.Rename(fileName+".tmp", fileName)
 	check(err)
+}
+
+func main() {
+	if len(os.Args) == 1 {
+		refresh("README.md")
+	} else {
+		refresh(os.Args[1])
+	}
 }

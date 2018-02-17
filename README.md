@@ -30,7 +30,7 @@ Benefits comparing with [existing solutions](#alternative-solutions):
 
 For example `README.md`:
 
-<!-- [freshReadmeSource](examples/README.example.md) -->
+<!-- [freshReadmeSource](examples/README.md.example) -->
 ```markdown
     # Regular expressions
 

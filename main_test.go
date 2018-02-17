@@ -29,7 +29,7 @@ func dump(dir string, fileName string, content string) {
 	check(e)
 }
 
-func refresh(source string, readme string) string {
+func testRefresh(source string, readme string) string {
 	startDir, e := filepath.Abs("./")
 	check(e)
 	defer os.Chdir(startDir)
@@ -42,7 +42,7 @@ func refresh(source string, readme string) string {
 	dump(dir, "README.md", readme)
 	dump(dir, "source", source)
 
-	main()
+	refresh("README.md")
 
 	result, err := ioutil.ReadFile("README.md")
 	check(err)
@@ -50,7 +50,7 @@ func refresh(source string, readme string) string {
 }
 
 func TestIncludeFile(t *testing.T) {
-	result := refresh(
+	result := testRefresh(
 		`test 1
 test 2
 test 3`,
@@ -81,7 +81,7 @@ after test
 }
 
 func TestIncludeSnippet(t *testing.T) {
-	result := refresh(
+	result := testRefresh(
 		`
 before test
 # freshReadmeSnippet: header
@@ -119,7 +119,7 @@ after test
 
 func TestEmptyInclude(t *testing.T) {
 	assertPanic(t, "Unable to find snippet", func() {
-		refresh("",
+		testRefresh("",
 			`
 before test
 <!-- [freshReadmeSource](source#header)  -->
@@ -134,7 +134,7 @@ after test
 
 func TestIncludeMultipleTimes(t *testing.T) {
 	assertPanic(t, "appears second time", func() {
-		refresh(
+		testRefresh(
 			`
 before test
 # freshReadmeSnippet: header
@@ -160,7 +160,7 @@ after test
 
 func TestEOF(t *testing.T) {
 	assertPanic(t, "Unexpected end of file", func() {
-		refresh(
+		testRefresh(
 			`
 before test
 # freshReadmeSnippet: header
@@ -180,7 +180,7 @@ after test
 }
 
 func TestTheTest(t *testing.T) {
-	readme, err := ioutil.ReadFile("examples/README.example.md")
+	readme, err := ioutil.ReadFile("examples/README.md.example")
 	check(err)
 
 	source1, err := ioutil.ReadFile("examples/Examples.java")
@@ -189,7 +189,7 @@ func TestTheTest(t *testing.T) {
 	source2, err := ioutil.ReadFile("examples/examples.py")
 	check(err)
 
-	expected, err := ioutil.ReadFile("examples/README.result.md")
+	expected, err := ioutil.ReadFile("examples/README.md.result")
 	check(err)
 
 	startDir, e := filepath.Abs("./")
@@ -205,9 +205,45 @@ func TestTheTest(t *testing.T) {
 	dump(dir, "examples/Examples.java", string(source1))
 	dump(dir, "examples/examples.py", string(source2))
 
-	main()
+	refresh("README.md")
 
 	result, err := ioutil.ReadFile("README.md")
+	check(err)
+
+	if string(expected) != string(result) {
+		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, result)
+	}
+}
+
+func TestSubdir(t *testing.T) {
+	readme, err := ioutil.ReadFile("examples/README.md.example")
+	check(err)
+
+	source1, err := ioutil.ReadFile("examples/Examples.java")
+	check(err)
+
+	source2, err := ioutil.ReadFile("examples/examples.py")
+	check(err)
+
+	expected, err := ioutil.ReadFile("examples/README.md.result")
+	check(err)
+
+	startDir, e := filepath.Abs("./")
+	check(e)
+	defer os.Chdir(startDir)
+
+	dir, e := ioutil.TempDir("", "example")
+	check(e)
+	os.Chdir(dir)
+	defer os.RemoveAll(dir)
+
+	dump(dir, "subdir/README.md", strings.Replace(string(readme), "    ", "", -1))
+	dump(dir, "subdir/examples/Examples.java", string(source1))
+	dump(dir, "subdir/examples/examples.py", string(source2))
+
+	refresh("subdir/README.md")
+
+	result, err := ioutil.ReadFile("subdir/README.md")
 	check(err)
 
 	if string(expected) != string(result) {
