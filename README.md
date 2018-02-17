@@ -25,6 +25,8 @@ Benefits comparing with [existing solutions](#alternative-solutions):
 * In `README.md`:
     - Put `<!-- [freshReadmeSource](path/to/file.ext) -->` before &grave;&grave;&grave; to inlude `path/to/file.ext`
     - Put `<!-- [freshReadmeSource](path/to/file.ext#snippetName) -->` before &grave;&grave;&grave; to inlude text surrounded by `snippetName` in `path/to/file.ext`
+* `freshReadme` without arguments will update "README.md" located in current directory
+* `freshReadme path/to/file.md` will update `file.md`
 
 ## Example
 
@@ -83,7 +85,7 @@ public class Examples {
 
 ## Automation
 
-Install freshReadme, then create `.git/hooks/pre-commit`:
+Install freshReadme, then create `.git/hooks/pre-commit` and `chmod +x .git/hooks/pre-commit`:
 
 <!-- [freshReadmeSource](examples/pre-commit) -->
 ```sh

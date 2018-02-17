@@ -1,6 +1,6 @@
 #!/bin/bash
 
 for f in $(git ls-files "*.md"); do
-  ./freshReadme "$f"
+  freshReadme "$f"
   git add "$f"
 done
