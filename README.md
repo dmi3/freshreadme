@@ -87,10 +87,12 @@ Install freshReadme, then create `.git/hooks/pre-commit`:
 
 <!-- [freshReadmeSource](examples/pre-commit) -->
 ```sh
-#!/bin/sh
+#!/bin/bash
 
-freshReadme
-git add README.md
+for f in $(git ls-files "*.md"); do
+  freshReadme "$f"
+  git add "$f"
+done
 ```
 
 ## Alternative solutions

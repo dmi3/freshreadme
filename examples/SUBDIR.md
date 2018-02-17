@@ -4,12 +4,18 @@ In Java
 
 <!-- [freshReadmeSource](Examples.java#snippet1) -->
 ```java
-// This will be overwritten from Examples.java
+        Pattern pattern = Pattern.compile("[a-z]+");
+        Matcher matcher = pattern.matcher("abc cde fgf");
+
+        ArrayList<String> matches = new ArrayList<>();
+        while (matcher.find()) {
+            matches.add(matcher.group());
+        }
 ```
 
 In Python
 
 <!-- [freshReadmeSource](examples.py#snippet2) -->
 ```python
-# This will be overwritten from examples.py
+matches = re.findall("[a-z]+", "abc cde fgf")
 ```
