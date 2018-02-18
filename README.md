@@ -1,4 +1,4 @@
-# freshReadme
+# Fresh Readme
 
 Keep source code examples in your readme fresh!
 
@@ -12,21 +12,27 @@ Suggested usage is Git [pre commit hook](#automation).
 
 ## Motivation
 
+It might be useful to you:
+
+* As preprocessor if your markdown-to-html solution does not support includes
+    - For example [Github README renderer](https://github.com/dmi3/freshReadme/#readme)
+* If you don't want to use markdown-to-html solution at all
+
 Benefits comparing with [existing solutions](#alternative-solutions):
 
 * Examples are updated in Markdown file not in resulting html, so default readme on Github or people who open Markdown file will get up to date examples
 * Source is refreshed in one Markdown file, so you don't need to keep duplicated `README.source.md` and `README.source.md`
-* Allows to include *only part* of souce file, to show only meaningful part of code skipping initialization and verification
+* Allows to include *only part* of source file, to show only meaningful part of code skipping initialization and verification
 * Includes source surrounded by specially formatted comments, not line numbers so if you change source code file, you don't need update includes in readme
-* Source language agnostic
+* Include source language agnostic - you can include any language that supports comments
 
 ## How to use
 
 * In `README.md`:
-    - Put `<!-- [freshReadmeSource](path/to/file.ext) -->` before &grave;&grave;&grave; to inlude `path/to/file.ext`
-    - Put `<!-- [freshReadmeSource](path/to/file.ext#snippetName) -->` before &grave;&grave;&grave; to inlude text surrounded by `snippetName` in `path/to/file.ext`
-* `freshReadme` without arguments will update "README.md" located in current directory
-* `freshReadme path/to/file.md` will update `file.md`
+    - Put `<!-- [freshReadmeSource](path/to/file.ext) -->` before &grave;&grave;&grave; to include `path/to/file.ext`
+    - Put `<!-- [freshReadmeSource](path/to/file.ext#snippetName) -->` before &grave;&grave;&grave; to include text surrounded by `snippetName` in `path/to/file.ext`
+* `freshreadme` without arguments will update "README.md" located in current directory
+* `freshreadme path/to/file.md` will update `file.md`
 
 ## Example
 
@@ -82,10 +88,18 @@ public class Examples {
 
 ```
 
+After running `freshreadme`, `README.md` [will be updated](examples/README.md.result).
+
+## Installation
+
+* Download [latest release](https://github.com/dmi3/freshreadme/releases)
+* Or clone repository and [build Go project](https://golang.org/doc/code.html#Command)
 
 ## Automation
 
-Install freshReadme, then create `.git/hooks/pre-commit` and `chmod +x .git/hooks/pre-commit`:
+[Install freshReadme](#installation), then create a [Git Hook](https://git-scm.com/book/gr/v2/Customizing-Git-Git-Hooks) `.git/hooks/pre-commit` and `chmod +x .git/hooks/pre-commit`.
+
+⚠ Note that this applies only to *previously committed* files with `.md` extension to avoid committing and modifying untracked files.
 
 <!-- [freshReadmeSource](examples/pre-commit) -->
 ```sh
