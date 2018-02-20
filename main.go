@@ -54,13 +54,21 @@ func fromFile(out *os.File, header string, fileName string) {
 	var state = NORMAL
 
 	var i = 0
+	var skip = 0
+	var indent = ' '
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
 		i++
 		var line = scanner.Text()
+		var ruline = []rune(line)
 
 		if state == COMMENT {
 			state = FENCE
+			for skip < len(ruline) &&
+				(ruline[skip] == ' ' || ruline[skip] == '\t') {
+				skip++
+			}
+			indent = ruline[0]
 		}
 
 		if strings.Contains(line, header) {
@@ -74,8 +82,17 @@ func fromFile(out *os.File, header string, fileName string) {
 		}
 
 		if state == FENCE {
-			_, err := out.WriteString(line + "\n")
-			check(err)
+			if skip <= len(line) {
+				for c := 0; c < skip; c++ {
+					panicIf(ruline[c] != indent, fileName, i, "Character `%c` doesn't not match indent `%c` x %d ", ruline[c], indent, skip)
+				}
+
+				_, err := out.WriteString(string(ruline[skip:len(line)]) + "\n")
+				check(err)
+			} else {
+				_, err := out.WriteString("\n")
+				check(err)
+			}
 		}
 	}
 

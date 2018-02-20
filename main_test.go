@@ -8,6 +8,12 @@ import (
 	"testing"
 )
 
+func assertEquals(t *testing.T, expected string, actual string) {
+	if expected != actual {
+		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, actual)
+	}
+}
+
 func assertPanic(t *testing.T, msg string, f func()) {
 	defer func() {
 		r := recover()
@@ -81,9 +87,7 @@ test 3
 after test
 `
 
-	if expected != string(result) {
-		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, string(result))
-	}
+	assertEquals(t, expected, string(result))
 }
 
 func TestIncludeSnippet(t *testing.T) {
@@ -118,9 +122,7 @@ test 3
 after test
 `
 
-	if expected != string(result) {
-		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, string(result))
-	}
+	assertEquals(t, expected, string(result))
 }
 
 func TestEmptyInclude(t *testing.T) {
@@ -209,6 +211,7 @@ func TestTheTest(t *testing.T) {
 }
 
 func TestParentAndSubDir(t *testing.T) {
+
 	result := testRefresh(
 		"subdir/README.md",
 		`before test
@@ -249,7 +252,82 @@ test 6
 after test
 `
 
-	if expected != string(result) {
-		t.Errorf("Expected \n---\n%s\n---\nGot\n---\n%s\n---\n", expected, string(result))
-	}
+	assertEquals(t, expected, result)
+}
+
+func TestRemoveIdents(t *testing.T) {
+
+	result := testRefresh(
+		"README.md",
+		`before test
+<!-- [freshReadmeSource](space#s1) -->
+`+"```"+`
+replaceMe
+`+"```"+`
+between includes
+<!-- [freshReadmeSource](tab#s1) -->
+`+"```"+`
+replaceMe
+`+"```"+`
+after test
+`,
+		"space",
+		`
+// freshReadmeSnippet: s1
+    test 1
+        test 2
+    test 3
+// freshReadmeSnippet: s1`,
+		"tab",
+		`
+// freshReadmeSnippet: s1
+		test 4
+				test 5
+		test 6
+// freshReadmeSnippet: s1`)
+
+	var expected = `before test
+<!-- [freshReadmeSource](space#s1) -->
+` + "```" + `
+test 1
+    test 2
+test 3
+` + "```" + `
+between includes
+<!-- [freshReadmeSource](tab#s1) -->
+` + "```" + `
+test 4
+		test 5
+test 6
+` + "```" + `
+after test
+`
+
+	assertEquals(t, expected, result)
+
+}
+
+
+func TestMixedIdents(t *testing.T) {
+	assertPanic(t, "doesn't not match indent", func() {
+		testRefreshSimple(
+			`
+before test
+# freshReadmeSnippet: header
+  	test 1
+test 2
+test 3
+# freshReadmeSnippet: header
+after test
+`,
+			`
+before test
+<!-- [freshReadmeSource](source#header) -->
+`+"```"+`
+replaceMe
+`+"```"+`
+after test
+`)
+
+	})
 }

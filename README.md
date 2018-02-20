@@ -25,6 +25,7 @@ Benefits comparing with [existing solutions](#alternative-solutions):
 * Allows to include *only part* of source file, to show only meaningful part of code skipping initialization and verification
 * Includes source surrounded by specially formatted comments, not line numbers so if you change source code file, you don't need update includes in readme
 * Include source language agnostic - you can include any language that supports comments
+* Automatic indentation removal
 
 ## How to use
 
@@ -57,7 +58,7 @@ For example `README.md`:
     ```
 ```
 
-And `examples/java.java`:
+And `examples/java.java` (note that indentation will be removed to start at first characher at first string):
 
 <!-- [freshReadmeSource](examples/Examples.java) -->
 ```java
